@@ -21,45 +21,53 @@ const RoleIdByLang: RoleIdByLang = {
   "nl": RoleId.nl,
 }
 
-const changeRoleTest = /^!lang (?:de|en|nl|fr)(?:,(?:de|en|nl|fr))*$/
+const changeRoleTest = /^!lang (?:de|en|nl|fr)(?: *,(?:de|en|nl|fr) *)*$/
 
 client.on ("ready", () => {
   console.log (`Optolith Bot logged in as "${client .user .tag}"`)
 })
 
 client.on ("message", async msg => {
-  if (changeRoleTest .test (msg.content)) {
-    const newLangs = decodeLangs (msg.content)
-    const oldLangs = getOldLangs (msg .member .roles)
+  if (!msg .author .bot) {
+    if (changeRoleTest .test (msg.content)) {
+      const newLangs = decodeLangs (msg.content)
+      const oldLangs = getOldLangs (msg .member .roles)
 
-    const [ids_to_add, ids_to_remove] = getChanges (oldLangs, newLangs)
+      const [ids_to_add, ids_to_remove] = getChanges (oldLangs, newLangs)
 
-    console.log(`Change roles for "${msg .author .tag}": Add ${ids_to_add .join (", ")}, remove ${ids_to_remove .join (", ")}`);
+      console.log(`Change roles for "${msg .author .tag}": Add ${ids_to_add .join (", ")}, remove ${ids_to_remove .join (", ")}`);
 
-    const member_added = ids_to_add.length > 0 ? await msg .member .addRoles (ids_to_add) : msg .member
-    ids_to_remove.length > 0 ? await member_added .removeRoles (ids_to_remove) : member_added
+      const member_added = ids_to_add.length > 0 ? await msg .member .addRoles (ids_to_add) : msg .member
+      ids_to_remove.length > 0 ? await member_added .removeRoles (ids_to_remove) : member_added
 
-    await msg.reply ("Done!")
+      await msg.reply ("Done!")
+    }
+    else if (msg.content === "!lang help") {
+      await msg.reply (help_text)
+    }
+    else if (/^!lang \w[\w ]+/ .test (msg.content)) {
+      await msg.reply (`Why ${msg .content .slice (6)}? o.O`)
+    }
   }
-  else if (msg.content === "!lang help") {
-    await msg.reply (
+})
+
+const help_text =
 `Ich weise dir die Sprachen zu, die du auf diesem Server auch sehen möchtest.
 Damit das auch funktioniert, musst du "!lang" mit deinen Sprachen, die du möchtest, aufrufen.
 Wenn du später deine Sprachen ändern möchtest, gibt den Befehl einfach erneut ein und liste nur die Sprachen auf, die du dann auch sehen möchtest.
 Beispiel: "!lang de,en" gibt dir die deutsche und englische Rolle. Rufst du später "!lang de" auf, hast du nur noch die deutsche Rolle.
+Verfügbare Sprachen: de, en, fr, nl
 
 I assign to you the languages you want to see on this server.
 To do that, you need to call "!lang" with the languages you want.
 If you want to change your languages later, you can just reenter the command and only list the languages you want to see after the call.
-Example: "!lang de,en" gives you the German and English role. If you call "!lang en" later, you'll only have the English role then.`
-    )
-  }
-})
+Example: "!lang de,en" gives you the German and English role. If you call "!lang en" later, you'll only have the English role then.
+Available languages: de, en, fr, nl`
 
 client.login (auth.token)
 
 const decodeLangs = (x: string): RoleId[] =>
-  x .slice (6) .split (",") .map (lang => RoleIdByLang [lang as Lang])
+  x .slice (6) .split (",") .map (lang => RoleIdByLang [lang .trim () as Lang])
 
 const getOldLangs = (x: Collection<string, Role>): RoleId[] =>
   x .reduce<RoleId[]> (
