@@ -35,7 +35,7 @@ client.on("message", async (msg) => {
             await msg.reply(help_text);
         }
         else if (/^!lang \w[\w ]+/.test(msg.content)) {
-            await msg.reply(`Why ${msg.content.slice(6)}? o.O`);
+            await msg.reply(`What is ${msg.content.slice(6)}? o.O`);
         }
     }
 });
