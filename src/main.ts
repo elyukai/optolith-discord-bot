@@ -1,5 +1,4 @@
 import { Client, Collection, Role } from "discord.js"
-import auth = require ("./auth.json")
 
 const client = new Client()
 
@@ -64,7 +63,7 @@ If you want to change your languages later, you can just reenter the command and
 Example: "!lang de,en" gives you the German and English role. If you call "!lang en" later, you'll only have the English role then.
 Available languages: de, en, fr, nl`
 
-client.login (auth.token)
+client.login (process.env.AUTH_TOKEN)
 
 const decodeLangs = (x: string): RoleId[] =>
   x .slice (6) .split (",") .map (lang => RoleIdByLang [lang .trim () as Lang])
