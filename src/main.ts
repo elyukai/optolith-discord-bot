@@ -67,6 +67,8 @@ Example: "!lang de,en" gives you the German and English role. If you call "!lang
 Available languages: de, en, fr, nl`
 
 client.login (process.env.AUTH_TOKEN)
+  .then (console.log)
+  .catch (console.error)
 
 const decodeLangs = (x: string): RoleId[] =>
   x .slice (6) .split (",") .map (lang => RoleIdByLang [lang .trim () as Lang])

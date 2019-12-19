@@ -52,7 +52,9 @@ To do that, you need to call "!lang" with the languages you want.
 If you want to change your languages later, you can just reenter the command and only list the languages you want to see after the call.
 Example: "!lang de,en" gives you the German and English role. If you call "!lang en" later, you'll only have the English role then.
 Available languages: de, en, fr, nl`;
-client.login(process.env.AUTH_TOKEN);
+client.login(process.env.AUTH_TOKEN)
+    .then(console.log)
+    .catch(console.error);
 const decodeLangs = (x) => x.slice(6).split(",").map(lang => RoleIdByLang[lang.trim()]);
 const getOldLangs = (x) => x.reduce((acc, role) => {
     if (Object.values(RoleId).includes(role.id)) {
